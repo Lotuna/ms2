@@ -13,6 +13,6 @@ Review a still frame with `index.html?scene=0&t=4.5`.
 | --- | --- |
 | `palette.js` | generated palette |
 | `draw.js` | framebuffer, primitives, Bayer dithering, neon glow, 3x5 font, typewriter |
-| `sprites.js` | E. coli, plasmid, pilus |
-| `hud.js` | monitor frame, panels, event log, inset magnifier, ambient loops |
-| `scenes.js` | scene definitions |
+| `sprites.js` | E. coli, plasmid, pilus, capsid, RNA, ribosome, replicase, coat dimer, membranes, L protein |
+| `hud.js` | monitor frame, panels, event log, inset magnifier, zoom transition, gene map, ambient loops |
+| `scenes/s0.js` … `s7.js` | one file per scene (F+/F-, recognition, entry, translation, replication, regulation, assembly, lysis) |

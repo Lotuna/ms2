@@ -16,7 +16,14 @@
 <script src="draw.js"></script>
 <script src="sprites.js"></script>
 <script src="hud.js"></script>
-<script src="scenes.js"></script>
+<script src="scenes/s0.js"></script>
+<script src="scenes/s1.js"></script>
+<script src="scenes/s2.js"></script>
+<script src="scenes/s3.js"></script>
+<script src="scenes/s4.js"></script>
+<script src="scenes/s5.js"></script>
+<script src="scenes/s6.js"></script>
+<script src="scenes/s7.js"></script>
 <script>
 (function () {
   'use strict';
@@ -60,7 +67,7 @@
     }
     G.restore();
     HUD.frameFront(gt, {
-      index, count: 8, title: sc.title, mag: sc.mag,
+      index, count: SCENES.length, title: sc.title, mag: sc.mag,
       progress: st / sc.dur,
       caption: sc.caption, captionT: st - (sc.captionAt || 0),
     });

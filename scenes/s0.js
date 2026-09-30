@@ -1,4 +1,5 @@
-// scenes.js — one entry per scene. draw(t) gets scene-local seconds and
+// Scene 0 — F+ vs F- cells, pilus, conjugation.
+// Each scene file registers SCENES[n]; draw(t) gets scene-local seconds and
 // draws inside HUD.VIEW (already clipped). Coordinates are internal pixels.
 (function (global) {
   'use strict';
@@ -103,16 +104,17 @@
 
       // ---- labels ----
       G.save(); G.alpha(seg(t, 0.2, 0.8));
-      G.textC('F+ CELL', FP_X, 76, C.CYAN);
-      G.textC('F PLASMID + PILUS', FP_X, 83, C.SKY);
+      G.textCBg('F+ CELL', FP_X, 76, C.CYAN, C.VOID);
+      G.textCBg('F PLASMID + PILUS', FP_X, 83, C.SKY, C.VOID);
       G.restore();
 
       G.save(); G.alpha(seg(t, 0.5, 1.1));
       if (!converted) {
-        G.textC('F- CELL', fmX, 76, C.SKY);
-        G.textC('NO PLASMID, NO PILUS', fmX, 83, C.BLUE2);
+        G.textCBg('F- CELL', fmX, 76, C.SKY, C.VOID);
+        G.textCBg('NO PLASMID, NO PILUS', fmX, 83, C.SKY, C.VOID);
       } else {
         const w = G.textW('F+ CELL');
+        G.rect(fmX - 40, 75, 81, 14, C.VOID);
         G.glitchText('F+ CELL', fmX - Math.round(w / 2), 76, C.CYAN, t - 7.9, 0.4);
         const s = 'GOT F PLASMID';
         G.glitchText(s, fmX - Math.round(G.textW(s) / 2), 83, C.SKY, t - 7.9, 0.6);
@@ -147,7 +149,7 @@
           G.line(31, 9, 40, 16, C.PURPLE);
           G.text('TRA GENES', 42, 15, C.PINK);
           G.text('BUILD PILUS', 42, 22, C.ICE);
-          G.text('NOT IN F-', 42, 33, C.BLUE2);
+          G.text('NOT IN F-', 42, 33, C.SKY);
         },
       });
 
@@ -155,5 +157,5 @@
     },
   };
 
-  global.SCENES = [scene0];
+  (global.SCENES = global.SCENES || [])[0] = scene0;
 })(window);

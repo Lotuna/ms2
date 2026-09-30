@@ -214,8 +214,61 @@
   // Text label with a leader line to (ax, ay).
   function label(str, x, y, ax, ay, c, lc) {
     G.line(ax, ay, x < ax ? x + G.textW(str) + 1 : x - 2, y + 2, lc == null ? C.SKY : lc);
-    G.text(str, x, y, c == null ? C.ICE : c);
+    G.textBg(str, x, y, c == null ? C.ICE : c, C.VOID);
   }
 
-  global.HUD = { SCREEN, VIEW, CAP, frameBack, frameFront, panel, log, inset, tag, scaleBar, label, brackets, lightOn };
+  // Scale-change transition drawn over a scene: everything outside a box
+  // growing from `src` to the full view is blanked, with a neon frame and a
+  // zoom readout. Call after the scene content, while t < dur.
+  function zoomReveal(t, dur, src, s) {
+    if (t >= dur) return;
+    const e = G.ease.inOut(G.seg(t, 0, dur));
+    const x = Math.round(G.lerp(src[0], VIEW.x, e)), y = Math.round(G.lerp(src[1], VIEW.y, e));
+    const w = Math.round(G.lerp(src[2], VIEW.w, e)), h = Math.round(G.lerp(src[3], VIEW.h, e));
+    G.shade(VIEW.x, VIEW.y, VIEW.w, VIEW.h, (px, py) =>
+      (px >= x && px < x + w && py >= y && py < y + h) ? -1
+        : ((px - VIEW.x) % 10 === 0 || (py - VIEW.y) % 10 === 0) ? C.NAVY : C.VOID);
+    G.glow(() => G.rectO(x, y, w, h, C.CYAN));
+    G.textBg(s, Math.min(x + 2, VIEW.x + VIEW.w - G.textW(s) - 3), Math.max(VIEW.y + 2, y - 8), C.PINK, C.VOID);
+  }
+
+  // MS2 genome map (3569 nt): maturation | coat | replicase, with lysis on a
+  // second row overlapping the coat end / replicase start.
+  const GENES = {
+    MAT: [130, 1311], COAT: [1335, 1727], LYS: [1678, 1905], REP: [1761, 3395], LEN: 3569,
+  };
+  function ntX(nt, x0, w) { return Math.round(x0 + nt / GENES.LEN * w); }
+  function geneMap(x, y, w, o) {
+    o = o || {};
+    const bar = (g, row, c, name, off) => {
+      const a = ntX(GENES[g][0], x, w), b = ntX(GENES[g][1], x, w);
+      const yy = y + row * 8;
+      if (off) {
+        G.rectD(a, yy, b - a, 7, C.VOID, C.PURPLE, 0.5);
+        G.rectO(a, yy, b - a, 7, c);
+      } else G.rect(a, yy, b - a, 7, c);
+      const lbl = G.textW(name) <= b - a - 2 ? name : name.slice(0, Math.max(1, Math.floor((b - a - 1) / 4)));
+      if (!off) G.text(lbl, a + 2, yy + 1, C.VOID);
+      else G.textBg(name + ' OFF', a + 3, yy + 1, C.PINK, C.VOID);
+      if (o.hot === g) G.glow(() => G.rectO(a - 1, yy - 1, b - a + 2, 9, C.WHITE));
+    };
+    G.hline(x, x + w - 1, y + 3, C.SKY);
+    G.text("5'", x - 9, y + 1, C.SKY);
+    G.text("3'", x + w + 2, y + 1, C.SKY);
+    bar('MAT', 0, C.MAGENTA, 'MATURATION');
+    bar('COAT', 0, C.CYAN_L, 'COAT');
+    bar('REP', 0, C.PINK, 'REPLICASE', o.repOff);
+    bar('LYS', 1, C.ICE, 'LYS');
+  }
+
+  // Legend rows: [[drawIcon(x, y), label], ...]
+  function legend(x, y, w, rows, title) {
+    panel(x, y, w, 10 + rows.length * 8, title || 'KEY', C.CYAN);
+    rows.forEach(([icon, str], i) => {
+      icon(x + 6, y + 13 + i * 8);
+      G.text(str, x + 13, y + 11 + i * 8, C.ICE);
+    });
+  }
+
+  global.HUD = { SCREEN, VIEW, CAP, frameBack, frameFront, panel, log, inset, tag, scaleBar, label, brackets, lightOn, zoomReveal, geneMap, legend, GENES, ntX };
 })(window);

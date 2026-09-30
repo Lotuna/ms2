@@ -274,7 +274,7 @@
     '!': '010010010000010', '?': '110001010000010', '%': '101001010100101', '|': '010010010010010',
     '>': '100010001010100', '<': '001010100010001', '_': '000000000000111', '=': '000111000111000',
     '#': '101111101111101', '[': '110100100100110', ']': '011001001001011', '~': '000011110000000',
-    '×': '000101010101000', 'µ': '000101101111100', 'ₘ': '000000111111101', 'ₙ': '000000110101101',
+    '×': '000101010101000', 'µ': '101101101111100', 'ₘ': '000000111111101', 'ₙ': '000000110101101',
     '█': '111111111111111', '*': '000101010101000', '&': '010101010101011', '^': '010101000000000',
   };
   const GW = 4, GH = 6; // advance, line height
@@ -291,6 +291,12 @@
     }
     return str.length * GW;
   }
+  // Text on a solid 1px-padded backing so it stays legible over the grid.
+  function textBg(str, x, y, c, bg) {
+    rect(Math.floor(x) - 1, Math.floor(y) - 1, textW(str) + 2, 7, bg == null ? C.VOID : bg);
+    return text(str, x, y, c);
+  }
+  function textCBg(str, cx, y, c, bg) { return textBg(str, Math.round(cx - textW(str) / 2), y, c, bg); }
   function textW(str) { return Math.max(0, str.length * GW - 1); }
   function textC(str, cx, y, c) { return text(str, Math.round(cx - textW(str) / 2), y, c); }
   function wrap(str, maxChars) {
@@ -411,7 +417,7 @@
     clear, rect, rectO, rectD, gradV, gradH, hline, vline, line, polyline,
     circle, disc, arc, shade, glow, remap,
     UM: 'µₘ', NM: 'ₙₘ',
-    text, textW, textC, wrap, typeText, glitchText, GW, GH,
+    text, textBg, textCBg, textW, textC, wrap, typeText, glitchText, GW, GH,
     clamp, lerp, seg, ease, hash, rnd, sdCapsule, resample, partial,
     present,
   };
