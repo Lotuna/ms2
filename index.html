@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MS2 Phage Life Cycle</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; background: #000; }
+  canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="screen" aria-label="Animated pixel-art explainer of the MS2 bacteriophage life cycle"></canvas>
+<script src="palette.js"></script>
+<script src="draw.js"></script>
+<script src="sprites.js"></script>
+<script src="hud.js"></script>
+<script src="scenes.js"></script>
+<script>
+(function () {
+  'use strict';
+  const canvas = document.getElementById('screen');
+  const ctx = canvas.getContext('2d');
+  document.body.style.background = PALETTE[G.C.VOID];
+
+  // 4x nearest-neighbour; drop to a smaller integer only if the window is too small.
+  let scale = 4;
+  function resize() {
+    const fit = Math.floor(Math.min(innerWidth / G.W, innerHeight / G.H));
+    scale = Math.max(1, Math.min(4, fit));
+    canvas.width = G.W * scale;
+    canvas.height = G.H * scale;
+    ctx.imageSmoothingEnabled = false;
+  }
+  addEventListener('resize', resize);
+  resize();
+
+  // URL params for review / screenshots: ?scene=0&t=4.2 freezes a frame.
+  const params = new URLSearchParams(location.search);
+  let index = Math.min(SCENES.length - 1, Math.max(0, parseInt(params.get('scene') || '0', 10) || 0));
+  const frozenT = params.has('t') ? parseFloat(params.get('t')) : null;
+
+  let clock = 0, sceneT = 0, paused = false, last = null;
+
+  function render(gt, st) {
+    const sc = SCENES[index];
+    G.resetState();
+    HUD.frameBack(gt);
+    G.save();
+    G.clip(HUD.VIEW.x, HUD.VIEW.y, HUD.VIEW.w, HUD.VIEW.h);
+    sc.draw(st, gt);
+    if (sc.notToScale !== false) HUD.tag('NOT TO SCALE', 257, 132);
+    // Scene-change tear: a few bright scanlines + static for 0.25 s.
+    if (st < 0.25) {
+      for (let k = 0; k < 6; k++) {
+        const y = HUD.VIEW.y + (G.hash(k, Math.floor(st * 40)) % HUD.VIEW.h);
+        G.remap(HUD.VIEW.x, y, HUD.VIEW.w, 1 + (k & 1), G.LIGHT, 0.6);
+      }
+    }
+    G.restore();
+    HUD.frameFront(gt, {
+      index, count: 8, title: sc.title, mag: sc.mag,
+      progress: st / sc.dur,
+      caption: sc.caption, captionT: st - (sc.captionAt || 0),
+    });
+    G.present(ctx, scale);
+  }
+
+  function tick(now) {
+    const dt = last == null ? 0 : Math.min(0.1, (now - last) / 1000);
+    last = now;
+    if (!paused) {
+      clock += dt;
+      sceneT += dt;
+      if (sceneT >= SCENES[index].dur) { sceneT = 0; index = (index + 1) % SCENES.length; }
+    }
+    render(clock, sceneT);
+    requestAnimationFrame(tick);
+  }
+
+  function go(d) { index = (index + d + SCENES.length) % SCENES.length; sceneT = 0; }
+  addEventListener('keydown', (e) => {
+    if (e.key === ' ') { paused = !paused; e.preventDefault(); }
+    else if (e.key === 'ArrowRight') go(1);
+    else if (e.key === 'ArrowLeft') go(-1);
+    else if (e.key === 'r' || e.key === 'R') sceneT = 0;
+  });
+  canvas.addEventListener('click', () => { paused = !paused; });
+
+  if (frozenT != null) { render(frozenT, frozenT); }
+  else requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
