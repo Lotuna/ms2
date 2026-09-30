@@ -9,6 +9,9 @@ Open `index.html` in a browser (no build step, works from `file://`).
 Controls: `Space` / click = pause, `←` `→` = previous/next scene, `R` = restart scene.
 Review a still frame with `index.html?scene=0&t=4.5`.
 
+Export an MP4 (1280x720, 30 fps): `node tools/export_video.js ms2-lifecycle.mp4 [path/to/ffmpeg]`
+(needs Playwright and an ffmpeg with libx264; `pip install imageio-ffmpeg` provides one).
+
 | File | Contents |
 | --- | --- |
 | `palette.js` | generated palette |

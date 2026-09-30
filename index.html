@@ -95,7 +95,20 @@
   });
   canvas.addEventListener('click', () => { paused = !paused; });
 
-  if (frozenT != null) { render(frozenT, frozenT); }
+  // Frame-exact hook for tools/export_video.js: draw scene i at scene time
+  // st (global time gt drives the ambient loops) and return the indexed frame.
+  window.MS2 = {
+    renderAt(i, st, gt) {
+      index = i; render(gt, st);
+      let s = '';
+      for (let k = 0; k < G.fb.length; k += 8192) s += String.fromCharCode.apply(null, G.fb.subarray(k, k + 8192));
+      return btoa(s); // base64 of palette indices
+    },
+    durations: SCENES.map((s) => s.dur),
+  };
+
+  if (params.has('export')) { /* driven externally */ }
+  else if (frozenT != null) { render(frozenT, frozenT); }
   else requestAnimationFrame(tick);
 })();
 </script>
