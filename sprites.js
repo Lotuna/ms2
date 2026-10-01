@@ -118,11 +118,14 @@
   //   o.reveal : 0..1 fraction of facets present (assembly); missing facets
   //              show whatever was drawn underneath (e.g. the RNA)
   //   o.empty  : dim, hollow shell (after genome ejection)
+  //   o.ramp / o.edge / o.seam : override shell colors (other phages)
   function capsid(cx, cy, r, o) {
     o = o || {};
     cx = Math.round(cx); cy = Math.round(cy);
     const rot = o.rot || 0, reveal = o.reveal == null ? 1 : o.reveal;
-    const ramp = o.empty ? [C.VOID, C.NAVY, C.NAVY2, C.BLUE] : shellRamp();
+    const ramp = o.ramp || (o.empty ? [C.VOID, C.NAVY, C.NAVY2, C.BLUE] : shellRamp());
+    const edgeC = o.edge == null ? (o.empty ? C.BLUE2 : C.CYAN_D) : o.edge;
+    const seamC = o.seam == null ? (o.empty ? C.NAVY : C.BLUE) : o.seam;
     const present = (f) => reveal >= 1 || G.rnd(f.id + 3, 11) < reveal;
     const at = (x, y) => facet(x + 0.5 - cx, y + 0.5 - cy, r, rot);
     const inside = (x, y) => (x + 0.5 - cx) ** 2 + (y + 0.5 - cy) ** 2 <= r * r;
@@ -132,7 +135,7 @@
         if (!inside(x, y)) return -1;
         const edge = !inside(x + 1, y) || !inside(x - 1, y) || !inside(x, y + 1) || !inside(x, y - 1);
         if (!edge) return -1;
-        return present(at(x, y)) ? (o.empty ? C.BLUE2 : C.CYAN_D) : -1;
+        return present(at(x, y)) ? edgeC : -1;
       }));
     }
     G.shade(cx - r, cy - r, 2 * r, 2 * r, (x, y) => {
@@ -142,7 +145,7 @@
       if (!present(f)) return -1;
       // facet edge: neighbour belongs to a different facet
       const fr = at(x + 1, y), fd = at(x, y + 1);
-      if (fr.id !== f.id || fd.id !== f.id) return o.empty ? C.NAVY : C.BLUE;
+      if (fr.id !== f.id || fd.id !== f.id) return seamC;
       const nx = Math.cos(f.a) * f.rc, ny = Math.sin(f.a) * f.rc, nz = Math.sqrt(1 - f.rc * f.rc);
       const b = G.clamp(nx * LX + ny * LY + nz * LZ, 0, 1);
       return G.ramp(x, y, b, ramp);

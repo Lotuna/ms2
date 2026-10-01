@@ -59,7 +59,7 @@
   function frameFront(t, info) {
     // Title bar.
     G.gradH(SCREEN.x, 9, SCREEN.w, 8, [C.NAVY2, C.NAVY, C.VOID, C.VOID, C.NAVY]);
-    G.text('MS2 PHAGE // LIFE CYCLE', 8, 10, C.CYAN_L);
+    G.text(info.header || '', 8, 10, C.CYAN_L);
     const tag = 'SCN ' + String(info.index).padStart(2, '0') + '/' + String(info.count - 1).padStart(2, '0') + '  ' + info.title;
     G.text(tag, 112, 10, C.SKY);
     if (Math.floor(t * 1.5) % 2 === 0) G.glow(() => G.disc(261, 12, 1, C.MAGENTA));
