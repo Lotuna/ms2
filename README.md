@@ -5,6 +5,7 @@ Two animated explainers sharing one engine. Open either page in a browser
 
 - `index.html`: MS2 bacteriophage life cycle (8 scenes, ~72 s)
 - `luria.html`: the Luria–Delbrück fluctuation test, 1943 (8 scenes, ~72 s)
+- `lewontin.html`: Lewontin's fallacy, with a two-group toy model (7 scenes, ~69 s)
 
 - Internal 320x180 indexed framebuffer, shown at 4x nearest-neighbour.
 - Colors: only the 16 in `palette.js`, extracted from the reference lab scene
@@ -23,5 +24,6 @@ Export an MP4 (1280x720, 30 fps): `node tools/export_video.js out.mp4 [path/to/f
 | `sprites.js` | E. coli, plasmid, pilus, capsid, RNA, ribosome, replicase, coat dimer, membranes, L protein |
 | `hud.js` | monitor frame, panels, event log, inset magnifier, zoom transition, gene map, ambient loops |
 | `player.js` | shared playback loop, controls, export hook |
+| `lewontin/` | toy model (two groups, F = 0.15), sprites, and scenes `w0.js` … `w6.js` |
 | `luria/` | Luria–Delbrück sprites, 1943 data, and scenes `l0.js` … `l7.js` |
 | `scenes/s0.js` … `s7.js` | one file per scene (F+/F-, recognition, entry, translation, replication, regulation, assembly, lysis) |
