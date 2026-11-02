@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ten Thousand Boots</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; background: #000; }
+  canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="screen" aria-label="Pixel-art short: ten thousand boots that validate your feelings"></canvas>
+<script src="palette.js"></script>
+<script src="draw.js"></script>
+<script src="sprites.js"></script>
+<script src="hud.js"></script>
+<script src="boot/sprites.js"></script>
+<script src="boot/b0.js"></script>
+<script src="boot/b1.js"></script>
+<script src="boot/b2.js"></script>
+<script src="boot/b3.js"></script>
+<script src="boot/b4.js"></script>
+<script src="player.js"></script>
+<script>Player.start({ header: 'THE FUTURE' });</script>
+</body>
+</html>
